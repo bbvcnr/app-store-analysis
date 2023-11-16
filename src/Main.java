@@ -76,7 +76,7 @@ public class Main {
             System.out.println(a.getCategory());
         }
         System.out.println(categories);
-
+            //komentar test git
     }
 
 }
