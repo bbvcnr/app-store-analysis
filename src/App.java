@@ -1,58 +1,41 @@
 public class App {
-    private final String name;
-    private final String id;
+    private final String appName;
+    private final String appId;
     private final String category;
-    private final Double rating;
-    private final Integer rcount;
-    private final String installs;
-    private final Integer mininstalls;
-    private final Integer maxinstalls;
-    private final Boolean free;
+    private final String Installs;
+    private final String free;
     private final Double price;
-    private final String currency;
-    private final String size;
-    private final String minandroid;
-    private final String devid;
-    private final String devwebsite;
-    private final String devmail;
-    private final String released;
-    private final String lastupdated;
-    private final String contentrating;
-    private final String privpolicy;
-    private final Boolean adsupported;
-    private final Boolean inapppurchases;
-    private final Boolean edchoice;
-    private final String scrapedtime;
+    private final String devId;
+    private final String devMail;
 
-    public App(String name, String id, String category, Double rating, Integer rcount, String installs, Integer mininstalls, Integer maxinstalls, Boolean free, Double price, String currency, String size, String minandroid, String devid, String devwebsite, String devmail, String released, String lastupdated, String contentrating, String privpolicy, Boolean adsupported, Boolean inapppurchases, Boolean edchoice, String scrapedtime) {
-        this.name = name;
-        this.id = id;
-        this.category = category;
-        this.rating = rating;
-        this.rcount = rcount;
-        this.installs = installs;
-        this.mininstalls = mininstalls;
-        this.maxinstalls = maxinstalls;
+    public App(String appName, String appId, String category, String Installs, String free, Double price, String devId, String devMail){
+        this.appName = appName;
+        this.appId=appId;
+        this.category=category;
+        this.Installs=Installs;
         this.free = free;
         this.price = price;
-        this.currency = currency;
-        this.size = size;
-        this.minandroid = minandroid;
-        this.devid = devid;
-        this.devwebsite = devwebsite;
-        this.devmail = devmail;
-        this.released = released;
-        this.lastupdated = lastupdated;
-        this.contentrating = contentrating;
-        this.privpolicy = privpolicy;
-        this.adsupported = adsupported;
-        this.inapppurchases = inapppurchases;
-        this.edchoice = edchoice;
-        this.scrapedtime = scrapedtime;
+        this.devId = devId;
+        this.devMail = devMail;
     }
 
-
+    public String getAppId() {return appId;}
     public String getCategory() {
         return category;
+    }
+    public String getFree() {return free;}
+    public String getInstalls() {return Installs;}
+    public String getDevMail() { return devMail;}
+
+    public String getDevId() {
+        return devId;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public String getAppName() {
+        return appName;
     }
 }
