@@ -7,14 +7,14 @@ public class Main {
     static HashMap<String, Integer> categories = new HashMap<>();
     static HashMap<String, Integer> topCompanies = new HashMap<>();
     static Map<String, Integer> developersWithApps = new HashMap<>();
-
+    static Integer badLines = 0;
     public static void main(String[] args) throws IOException {
         ArrayList<App> apps = new ArrayList<App>();
         Long freeInstalls = 0L;
         Long paidInstalls = 0L;
 
         try {
-            File f1 = new File("GooglePlayStoreApps1000");
+            File f1 = new File("Google Play Store Apps.csv");
 
             Scanner s1 = new Scanner(f1);
 
@@ -43,7 +43,8 @@ public class Main {
                     apps.add(n);
                 }
                 catch (NumberFormatException e) {
-                    throw new RuntimeException(e);
+                    badLines++;
+                    continue;
                 }
             }
             s1.close();
@@ -59,14 +60,17 @@ public class Main {
         SaveToReport2(topCompanies);
         topThreeDevelopers(apps);
         SaveToReport3(developersWithApps);
-        Map<String, Double> pricedMap = new HashMap<>(AppsByPrice(apps));
-        List<String> boughtApps = new ArrayList<>(CalculateAppsToBuy(pricedMap, 100));
-        SaveToReport4(boughtApps);
+        Map<String, Double> prices = new HashMap<>(AppPrices(apps));
+        Map<String, Double> pricedMap = new HashMap<>(prices);
+        List<String> boughtApps1 = new ArrayList<>(CalculateAppsToBuy(pricedMap, 1000));
+        List<String> boughtApps2 = new ArrayList<>(CalculateAppsToBuy(pricedMap, 10000));
+        SaveToReport4(boughtApps1);
+        SaveToReport4b(boughtApps2);
         SaveToReport5(freeInstalls, paidInstalls);
+        ErrorReport(badLines);
     }
 
     private static void getCategories(ArrayList<App> apps) {
-        System.out.println(apps);
         for (App a : apps) {
             //System.out.println(a.getCategory());
             if (categories.containsKey(a.getCategory())) {
@@ -79,7 +83,7 @@ public class Main {
     }
     private static void SaveToReport1(Map<String, Integer> catgs) throws IOException {
         FileWriter fw = new FileWriter("Report 1.csv");
-        fw.write("Apps categories:\n");
+        fw.write("App categories:\n");
         for (Map.Entry<String, Integer> entry : catgs.entrySet()) {
             fw.write(entry.getKey() + "," + entry.getValue() + "\n");
         }
@@ -107,12 +111,12 @@ public class Main {
     }
     private static void SaveToReport2(Map<String, Integer> comps) throws IOException {
         FileWriter fw = new FileWriter("Report 2.csv");
-        fw.write("Companies with most apps:\n");
+        fw.write("Top 100 companies with most apps:\n");
 
         List<Map.Entry<String,Integer>> sortedCompanies = new ArrayList<>(comps.entrySet());
         sortedCompanies.sort((entry1,entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
-        for (int i=0; i<Math.min(sortedCompanies.size(),10); i++) {
+        for (int i=0; i<Math.min(sortedCompanies.size(),100); i++) {
             Map.Entry<String,Integer> entry = sortedCompanies.get(i);
             fw.write(entry.getKey() + ": " + entry.getValue() + " apps \n");
         }
@@ -141,7 +145,7 @@ public class Main {
     }
     private static void SaveToReport3(Map<String, Integer> comps) throws IOException {
         FileWriter fw = new FileWriter("Report 3.csv");
-        fw.write("Developers with most apps:\n");
+        fw.write("Independent developers with the most apps:\n");
 
         List<Map.Entry<String, Integer>> sortedDevelopers = new ArrayList<>(developersWithApps.entrySet());
         sortedDevelopers.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
@@ -152,40 +156,44 @@ public class Main {
         }
         fw.close();
     }
-    private static Map<String, Double> AppsByPrice(ArrayList<App> apps){
-        Map<String, Double> Prices = new HashMap<>();
+    private static Map<String, Double> AppPrices(ArrayList<App> apps){
+        Map<String, Double> appPrices = new HashMap<>();
         for (App a: apps){
-            Prices.put(a.getAppName(), a.getPrice());
+            appPrices.put(a.getAppName(), a.getPrice());
         }
-        List<Map.Entry<String, Double>> sortedPrices = new ArrayList<>(Prices.entrySet());
-        sortedPrices.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
-
-        Map<String, Double> pricesMap = new HashMap<>();
-        for (Map.Entry<String, Double> entry : sortedPrices) {
-            pricesMap.put(entry.getKey(), entry.getValue());
-            //System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
-        return pricesMap;
+        return appPrices;
+    }
+    private static Map<String, Double> AppsByPrice(Map<String, Double> appPrices){
+        Map<String, Double> sortedPrices = new HashMap<>(appPrices);
+        sortedPrices.entrySet().stream().sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+        return sortedPrices;
     }
     private static List<String> CalculateAppsToBuy(Map<String, Double> appPrices, double budget) {
         List<String> appsBought = new ArrayList<>();
-        double remainingBudget = budget;
+        double remainBudget = budget;
 
         for (Map.Entry<String, Double> entry : appPrices.entrySet()) {
-            if (remainingBudget >= entry.getValue()) {
-                remainingBudget -= entry.getValue();
+            if (remainBudget >= entry.getValue()) {
+                remainBudget -= entry.getValue();
                 appsBought.add(entry.getKey());
             } else {
                 break;
             }
         }
-        //System.out.println(appsBought);
         return appsBought;
     }
-    private static void SaveToReport4(List<String> appsBought) throws IOException {
+    private static void SaveToReport4(List<String> appsbought1) throws IOException {
         try(FileWriter fw = new FileWriter("Report 4.csv")) {
             fw.write("Apps that can be bought with $1000\n");
-            for (String appName : appsBought) {
+            for (String appName : appsbought1) {
+                fw.write(appName + "\n");
+            }
+        }
+    }
+    private static void SaveToReport4b(List<String> appsbought2) throws IOException {
+        try(FileWriter fw = new FileWriter("Report 4b.csv")) {
+            fw.write("Apps that can be bought with $10000\n");
+            for (String appName : appsbought2) {
                 fw.write(appName + "\n");
             }
         }
@@ -197,6 +205,12 @@ public class Main {
             fw.write(String.valueOf(free) + "\n");
             fw.write("Total number of installs for paid apps: \n");
             fw.write(String.valueOf(paid));
+        }
+    }
+    private static void ErrorReport(Integer lines) throws IOException {
+        try(FileWriter fw = new FileWriter("Report errors.csv")) {
+            fw.write("Total number of bad lines: \n");
+            fw.write(String.valueOf(badLines) + "\n");
         }
     }
 }

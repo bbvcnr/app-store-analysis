@@ -31,6 +31,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\Report 4b.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\Report 5.csv">
           <value>
             <Attribute>
@@ -38,10 +45,10 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\Report2.csv">
+        <entry key="\Report errors.csv">
           <value>
             <Attribute>
-              <option name="separator" value="," />
+              <option name="separator" value=":" />
             </Attribute>
           </value>
         </entry>
